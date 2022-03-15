@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Youtube</title>
+  </head>
+  <script
+    src="https://kit.fontawesome.com/c66d205b94.js"
+    crossorigin="anonymous"
+  ></script>
+  <style>
+    #nav {
+      /* border: 1px solid black; */
+      width: 100%;
+      height: 68px;
+      display: flex;
+    }
+    #search_bar {
+      width: 550px;
+      height: 38px;
+      font-family: Roboto, Noto, sans-serif;
+    }
+    #ytLOGO {
+      width: 15%;
+      height: 100%;
+      /* border: 2px solid rgb(161, 68, 68); */
+      background-image: url("https://cdn.mos.cms.futurecdn.net/8gzcr6RpGStvZFA2qRt4v6.jpg");
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    button {
+      height: 44px;
+      width: 60px;
+      margin-right: 17px;
+    }
+    #searchTomic {
+      display: flex;
+      align-items: center;
+      margin-left: 44px;
+    }
+    #mic {
+      font-size: 22px;
+    }
+    #icos {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 18%;
+      margin-left: 160px;
+      font-size: 20px;
+    }
+    #main {
+      display: flex;
+      gap: 10px;
+    }
+    #video_part {
+      flex: 3;
+      /* border: 1px solid black; */
+      height: 450px;
+      margin-left: 90px;
+      margin-top: 20px;
+    }
+    #recommend {
+      flex: 1.5;
+      /* border: 1px solid black; */
+      margin-right: 80px;
+      margin-top: 20px;
+      margin-left: 20px;
+    }
+    #video {
+      height: 380px;
+    }
+    h3 {
+      font-family: Roboto, Arial, sans-serif;
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 26px;
+    }
+  </style>
+  <body>
+    <header>
+      <div id="nav">
+        <div id="ytLOGO"></div>
+        <div id="searchTomic">
+          <input type="text" id="search_bar" placeholder="Search" />
+          <button onclick="searchVideo()">
+            <i class="fas fa-search" id="searchIcon"></i>
+          </button>
+          <i class="fas fa-microphone" id="mic"></i>
+        </div>
+        <div id="icos">
+          <i class="fas fa-video"></i>
+          <i class="fas fa-th"></i>
+          <i class="far fa-bell"></i>
+          <i class="fas fa-user-circle"></i>
+        </div>
+      </div>
+    </header>
+    <div id="main">
+      <div id="video_part"></div>
+      <div id="recommend"></div>
+    </div>
+  </body>
+</html>
+<script>
+  document.querySelector("#home, #ytLOGO").addEventListener("click", () => {
+    window.location.href = "index.html";
+  });
+
+  async function popularVideos() {
+    try {
+      let res = await fetch(
+        "https://youtube.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=IN&key=AIzaSyBXWG89UzeU6WvP1LIpDJAQBQiOrkA_MyQ&maxResults=20"
+      );
+      let data = await res.json();
+      console.log(data.items);
+      appendRecommeded(data.items);
+    } catch (er) {
+      console.log(er);
+    }
+  }
+  popularVideos();
+
+  function appendRecommeded(data) {
+    console.log(data);
+    data.map(function ({ snippet, id }) {
+      let div = document.createElement("div");
+
+      let image = document.createElement("img");
+      image.src = snippet.thumbnails.medium.url;
+
+      let iframe = document.createElement("iframe");
+      iframe.src = `https://www.youtube.com/embed/${id}`;
+
+      let title = document.createElement("p");
+      title.textContent = snippet.title;
+      div.append(iframe, title);
+      document.querySelector("#recommend").append(div);
+    });
+  }
+
+  let {
+    videoId,
+    snippet: { title },
+  } = JSON.parse(localStorage.getItem("clicked_Data"));
+  // console.log(id);
+
+  var div = document.createElement("div");
+  div.setAttribute("id", "video");
+
+  var video_div = document.getElementById("video_part");
+
+  var iframe = document.createElement("iframe");
+  iframe.src = `https://www.youtube.com/embed/${videoId}`;
+  iframe.width = "100%";
+  iframe.height = "100%";
+  iframe.setAttribute("allowfullscreen", "true");
+
+  div.append(iframe);
+
+  let Vtitle = document.createElement("h3");
+  Vtitle.textContent = title;
+  video_div.append(div, Vtitle);
+</script>

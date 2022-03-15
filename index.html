@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Youtube</title>
+    <script
+      src="https://kit.fontawesome.com/c66d205b94.js"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      #right_div {
+        display: grid;
+        grid-template-columns: repeat(4, 25%);
+        grid-gap: 5px;
+      }
+      #left_div {
+        width: 18%;
+        height: 500px;
+        /* border: 1px solid black; */
+        /* width: 200px; */
+      }
+      #main {
+        display: flex;
+        margin-top: 10px;
+      }
+      #nav {
+        /* border: 1px solid black; */
+        width: 100%;
+        height: 68px;
+        display: flex;
+      }
+      #search_bar {
+        width: 550px;
+        height: 38px;
+        font-family: Roboto, Noto, sans-serif;
+      }
+      #right_div {
+        /* border: 1px solid black; */
+        width: 80%;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+      }
+      #thumbnail {
+        width: 100%;
+      }
+      /* #v_details_div {
+        border: 1px solid black;
+      } */
+      #ytLOGO {
+        width: 15%;
+        height: 100%;
+        /* border: 2px solid rgb(161, 68, 68); */
+        background-image: url("https://cdn.mos.cms.futurecdn.net/8gzcr6RpGStvZFA2qRt4v6.jpg");
+        background-size: contain;
+        background-repeat: no-repeat;
+      }
+      button {
+        height: 44px;
+        width: 60px;
+        margin-right: 17px;
+      }
+      #searchTomic {
+        display: flex;
+        align-items: center;
+        margin-left: 44px;
+      }
+      #mic {
+        font-size: 22px;
+      }
+      #icos {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 18%;
+        margin-left: 160px;
+        font-size: 20px;
+      }
+      /* #left_Home {
+        /* display: flex; */
+      /* border: 1px solid black; */
+      /* height: 50px; */
+      /* font-size: larger; */
+      /* } */
+      .align {
+        /* border: 1px solid black; */
+        height: 60px;
+        align-items: center;
+        display: flex;
+        align-content: center;
+        padding-left: 20px;
+      }
+      .align:hover {
+        background-color: rgb(173, 173, 173);
+      }
+      #home {
+        padding-left: 20px;
+        cursor: pointer;
+      }
+      #explore {
+        padding-left: 20px;
+        cursor: pointer;
+      }
+      #subscription {
+        padding-left: 20px;
+        cursor: pointer;
+      }
+      i {
+        cursor: pointer;
+      }
+      #history {
+        padding-left: 20px;
+        cursor: pointer;
+      }
+      #later {
+        padding-left: 20px;
+        cursor: pointer;
+      }
+      p {
+        font-weight: bold;
+      }
+      img {
+        width: 263px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div id="nav">
+        <div id="ytLOGO"></div>
+        <div id="searchTomic">
+          <input type="text" id="search_bar" placeholder="Search" />
+          <button onclick="searchVideo()">
+            <i class="fas fa-search" id="searchIcon"></i>
+          </button>
+          <i class="fas fa-microphone" id="mic"></i>
+        </div>
+        <div id="icos">
+          <i class="fas fa-video"></i>
+          <i class="fas fa-th"></i>
+          <i class="far fa-bell"></i>
+          <i class="fas fa-user-circle"></i>
+        </div>
+      </div>
+    </header>
+
+    <hr />
+
+    <div id="main">
+      <div id="left_div">
+        <div class="align">
+          <i class="fas fa-home"></i>
+          <p id="home">Home</p>
+        </div>
+        <div class="align">
+          <i class="far fa-compass"></i>
+          <h4 id="explore">Explore</h4>
+        </div>
+        <div class="align">
+          <i class="fab fa-youtube"></i>
+          <h4 id="subscription">Subscription</h4>
+        </div>
+        <div class="align">
+          <i class="fas fa-history"></i>
+          <h4 id="history">History</h4>
+        </div>
+        <div class="align">
+          <i class="far fa-clock"></i>
+          <h4 id="later">Watch Late</h4>
+        </div>
+      </div>
+      <div id="right_div"></div>
+    </div>
+  </body>
+</html>
+<script>
+  const result_div = document.getElementById("right_div");
+  document.querySelector("#home, #ytLOGO").addEventListener("click", () => {
+    popularVideos();
+  });
+
+  async function searchVideo() {
+    try {
+      let video_query = document.getElementById("search_bar").value;
+
+      let resonse = await fetch(
+        `https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${video_query}&type=video&key=AIzaSyBXWG89UzeU6WvP1LIpDJAQBQiOrkA_MyQ&maxResults=20`
+      );
+      let data = await resonse.json();
+      // console.log(data);
+      let videos = data.items;
+      // console.log(videos);
+
+      appendVideos(videos);
+    } catch (er) {
+      console.log("er", er);
+    }
+  }
+
+  async function popularVideos() {
+    try {
+      let res = await fetch(
+        "https://youtube.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=IN&key=AIzaSyBXWG89UzeU6WvP1LIpDJAQBQiOrkA_MyQ&maxResults=20"
+      );
+      let data = await res.json();
+      // console.log(data.items);
+      append_popular(data.items);
+    } catch (er) {
+      console.log(er);
+    }
+  }
+  popularVideos();
+
+  // function appendVideos(videos){
+  // }
+
+  const append_popular = (data) => {
+    console.log(data);
+    document.querySelector("#right_div").innerHTML = null;
+    data.map(({ snippet, id }) => {
+      let div = document.createElement("div");
+      div.setAttribute("id", "thumbnail_div");
+
+      let iframe = document.createElement("iframe");
+      iframe.src = `https://www.youtube.com/embed/${id}`;
+      // iframe.height = "60%";
+      iframe.width = "100%";
+      iframe.setAttribute("allowfullscreen", "true");
+
+      // let image = document.createElement("img");
+      // image.src = snippet.thumbnails.medium.url;
+      let Title = document.createElement("p");
+      Title.textContent = snippet.title;
+
+      // let data_to_send = {
+      //   snippet,
+      //   id,
+      // };
+      // div.onclick = () => {
+      //   showVideo(data_to_send);
+      // };
+
+      div.append(iframe, Title);
+      document.querySelector("#right_div").append(div);
+    });
+  };
+
+  const appendVideos = (videos) => {
+    document.querySelector("#right_div").innerHTML = null;
+    videos.map(({ snippet, id: { videoId } }) => {
+      // let v_id = ele.id.videoId;
+
+      // let {snippet,id: { videoId },
+      // } = ele;
+      // console.log(videoId);
+      // console.log(snippet);
+
+      let div = document.createElement("div");
+      div.setAttribute("id", "v_details_div");
+      // let iframe = document.createElement("iframe");
+      // iframe.src = `https://www.youtube.com/embed/${videoId}`;
+      // iframe.height = "215";
+      // iframe.width = "270";
+      // iframe.setAttribute("allowfullscreen", "true");
+
+      let title = document.createElement("p");
+      title.textContent = snippet.title;
+
+      let thumbnail = document.createElement("img");
+      thumbnail.src = snippet.thumbnails.medium.url;
+      thumbnail.setAttribute("id", "thumbnail");
+
+      let data_to_send = {
+        snippet,
+        videoId,
+      };
+
+      // div.onclick = function(){
+      //   showVideo()
+      // }
+
+      div.onclick = () => {
+        showVideo(data_to_send);
+      };
+
+      div.append(thumbnail, title);
+      document.querySelector("#right_div").append(div);
+      // document.querySelector("#right_div").append(iframe);
+    });
+  };
+
+  function showVideo(data_to_send) {
+    localStorage.setItem("clicked_Data", JSON.stringify(data_to_send));
+    window.location.href = "video.html";
+  }
+</script>
